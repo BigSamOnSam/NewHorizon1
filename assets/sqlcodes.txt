@@ -1,0 +1,19 @@
+CREATE DATABASE horizon_db;
+
+USE horizon_db;
+
+CREATE TABLE students (
+	student_id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    middlename VARCHAR(50),
+    dob DATE NOT NULL,
+    gender ENUM("Male", "Female", "Others") DEFAULT "Others",
+    phone_number VARCHAR(15) NOT NULL UNIQUE KEY,
+    email VARCHAR(255) NOT NULL UNIQUE KEY,
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE `students` ADD `password` VARCHAR(255) NOT NULL AFTER `email`;
+
+ALTER TABLE students ADD profile_dp VARCHAR(255) NOT NULL AFTER password;
