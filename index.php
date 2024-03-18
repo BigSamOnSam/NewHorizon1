@@ -6,11 +6,23 @@
     $pdperr = "";
     if($_SERVER['REQUEST_METHOD'] == "POST") {
         $profile_dp = $_FILES['profile_dp'];
+        
 
         $uploadDirectory = "students_dp/";
         $maxSize = 3 * 1024 * 1024;
         if($profile_dp['size'] <= $maxSize) {
-            $pdperr = "File is Good " . ($profile_dp['size'])/ (1024 * 1024) . "mb";
+            if($profile_dp['type'] == "image/jpeg" || $profile_dp['type'] == 'image/jpg' || $profile_dp['type'] == 'image/png') {
+
+                $filePath = $uploadDirectory . uniqid() . "." . pathinfo($profile_dp['name'], PATHINFO_EXTENSION);
+                echo "<h1> $filePath</h1>";
+                if(move_uploaded_file($profile_dp['tmp_name'], $filePath)) {
+                    echo "Image Uploaded Successfully";
+                } else {
+                    echo "Upload Failed";
+                }
+            } else {
+                $pdperr = "File type is not supported";
+            }
         } else {
             $pdperr = "File size is too large " . ($profile_dp['size'])/ (1024 * 1024) . "mb";
         }

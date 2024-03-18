@@ -24,16 +24,21 @@
 
         // Validate Profile Picture
         $uploadDirectory = "students_dp/";
-        $maxFileSize = 3 * 1024 * 1024;
-        if($profile_dp['size'] <= $maxFileSize) {
-            if(isset($profile_dp) && $profile_dp['error'] == 0) {
-                $tempFilePath = 
+        $maxSize = 3 * 1024 * 1024;
+        if ($profile_dp['error'] == 0){
+            if($profile_dp['size'] <= $maxSize) {
+                if($profile_dp['type'] == "image/jpeg" || $profile_dp['type'] == 'image/jpg' || $profile_dp['type'] == 'image/png') {
+                    $filePath = $uploadDirectory . uniqid() . "." . pathinfo($profile_dp['name'], PATHINFO_EXTENSION);
+                } else {
+                    $pdperr = "File type is not supported";
+                }
             } else {
-                $pdperr = "There was an error uploading this file";
+                $pdperr = "File size is too large " . ($profile_dp['size'])/ (1024 * 1024) . "mb";
             }
         } else {
-            $pdperr = "File is too large please uploade 3mb image";
+            $pdperr = "Upload Failed";
         }
+        
 
         // Validating the phone number 
         if(preg_match("/^0[789][01]\d{8}$/", $phone_number)) {
@@ -85,11 +90,16 @@
         }
         
         // Inserting to database
-        if($pherr == "" && $pwerr == "" && $emerr == "") {
+        if($pherr == "" && $pwerr == "" && $emerr == "" && $pdperr == "") {
+
+
 
             // Use prepared statements to avoid SQL injection
-            $query = $conn->prepare("INSERT INTO students(firstname, lastname, middlename, dob, gender, phone_number, email, password) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
-            $query->bind_param("ssssssss", $firstname, $lastname, $middlename, $dob, $gender, $phone_number, $email, $hashpass);
+            $query = $conn->prepare("INSERT INTO students(firstname, lastname, middlename, dob, gender, phone_number, email, password, profile_dp) VALUES(?, ?, ?, ?, ?, ?, ?, ?,?)");
+            $query->bind_param("sssssssss", $firstname, $lastname, $middlename, $dob, $gender, $phone_number, $email, $hashpass, $filePath);
+
+            // Moving the student image to the students_dp folder
+            move_uploaded_file($profile_dp['tmp_name'], $filePath);
 
             // Execute the query
             $query->execute();
@@ -110,6 +120,7 @@
     <form action="" method="post" enctype="multipart/form-data">
         <input type="file" name="profile_dp" id="image" onchange="previewImage()"/>
         <img src=""  id="imagePreview" style="max-width: 300px; max-height:300px" />
+        <span><?= $pdperr ?></span>
         <input type="text" name="firstname" placeholder="Enter Firstname" value="<?= $firstname ?>" required/> 
         <input type="text" name="middlename" placeholder="Enter Middlename" value="<?= $middlename ?>" /> 
         <input type="text" name="lastname" placeholder="Enter Lastname" value="<?= $lastname ?>" required/> <br/>
