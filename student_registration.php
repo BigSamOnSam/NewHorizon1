@@ -3,10 +3,7 @@
     $pagetitle = "Student Registration";
     require_once "assets/header.php";
 
-    $conn = mysqli_connect('localhost', 'root', '', 'horizon_db');
-    if (!$conn) {
-        die("Database Connection Failed " . mysqli_connect_error());
-    }
+    
     $pherr = $emerr = $pwerr = $pdperr = "";
     $msg = $firstname = $lastname= $middlename = $phone_number = $email = $profile_dp = "";
 
