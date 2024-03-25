@@ -3,6 +3,8 @@
     $pagetitle = "Login to New Horizon";
     require_once "assets/header.php";
 
+    
+
     // Initializing the email and password
     $email = $err = "";
 
@@ -21,13 +23,16 @@
         $sql->execute();
 
         // Get the result
-        $result = mysqli_get_result($sql);
+        // $result = mysqli_get_result($sql);
+        $result = mysqli_stmt_get_result($sql);
 
         // Check if the email already exists
         if (mysqli_num_rows($result) == 1) {
             $studinfo = mysqli_fetch_assoc($result);
             if(password_verify($pass, $studinfo['password'])) {
-                echo "<h1>Login Successfully</h1>";
+                // echo "<h1>Login Successfully</h1>";
+                $_SESSION['alex_id'] = $studinfo['student_id'];
+                header('Location: dashboard.php');
             } else {
                 $err = "Invalid login details";
             }

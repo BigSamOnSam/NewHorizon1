@@ -1,3 +1,7 @@
+<?php 
+    require_once "assets/dbconnect.php";
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,12 +16,14 @@
         <nav>
             <ul>
                 <li><a href="index.php">Home</a></li>
-                <li><a href="student_registration.php">Register Student</a></li>
-                <li><a href="login.php">Login</a></li>
+                <?php if(isset($_SESSION['alex_id'])) { ?>
+                    <li><a href="dashboard.php">Dashboard</a></li>
+                    <li><a href="logout.php">logout</a></li>
+                <?php } else { ?> 
+                    <li><a href="student_registration.php">Register Student</a></li>
+                    <li><a href="login.php">Login</a></li>
+                <?php } ?>
             </ul>
         </nav>
     </header>
 
-<?php 
-    require_once "assets/dbconnect.php";
-?>
